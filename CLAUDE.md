@@ -1,114 +1,14 @@
-# CLAUDE.md
+# 项目：儿童算数小能手 - 核心指令集
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 1. 启用的模式
+- **Planning-with-Files**: 严格执行 [更新计划 -> 记录发现 -> 修改代码 -> 更新进度] 循环。
+- **Superpowers (Reasoning & Multimodality)**: 在修改代码前，必须进行“深度思维链回溯”，考虑儿童心理学和 UI 交互的直观性。
+- **NotebookLM-Skill (Grounded Knowledge)**: 所有业务逻辑（如算数教学法）必须基于项目定义的 Source 文件夹。
 
-## Project Overview
-
-儿童算术学习工具 - A full-stack children's arithmetic learning application with React frontend and Express backend.
-
-## Common Commands
-
-### Development
-
-```bash
-# Install all dependencies (root, frontend, and backend)
-npm run install:all
-
-# Start both frontend and backend concurrently
-npm run dev
-
-# Start only frontend (Vite dev server on http://localhost:5173)
-npm run dev:frontend
-
-# Start only backend (Express on http://localhost:3000 with hot reload via tsx)
-npm run dev:backend
-```
-
-### Build
-
-```bash
-# Build frontend (outputs to frontend/dist)
-npm run build
-
-# Build backend (compiles TypeScript to backend/dist)
-npm run build:backend
-```
-
-### Testing & Linting
-
-```bash
-# Backend tests (Jest)
-cd backend && npm test
-
-# Backend tests with watch mode
-cd backend && npm run test:watch
-
-# Frontend linting (ESLint)
-cd frontend && npm run lint
-```
-
-## Architecture Overview
-
-### Monorepo Structure
-- **Root**: npm workspaces configuration, concurrent dev scripts
-- **frontend/**: React 18 + TypeScript + Vite + Material-UI
-- **backend/**: Express + TypeScript + SQLite3
-
-### Frontend Architecture (`frontend/src/`)
-
-**State Management:**
-- `contexts/GameContext.tsx` - Global state for current user, authentication, and score operations
-- User session persisted to localStorage
-- API calls via axios with base URL from `VITE_API_URL` env var (defaults to localhost:3000/api)
-
-**Routing:**
-- React Router with route guards (`ProtectedRoute`, `HomeRoute`)
-- `/` - Welcome/Login page
-- `/home` - Main dashboard
-- `/practice` - Difficulty/operation selection
-- `/practice-game` - Active game (10 questions per round)
-- `/game-result` - Score display
-- `/scores` - History and statistics
-- `/profile` - User profile management
-
-**Theme:**
-- Custom Material-UI theme in `App.tsx` with child-friendly colors (green primary, orange secondary)
-- Large rounded buttons with increased font sizes for accessibility
-
-### Backend Architecture (`backend/src/`)
-
-**Services (Singleton Pattern):**
-- `services/QuestionGenerator.service.ts` - Generates arithmetic questions with difficulty-based ranges. Key logic: subtraction ensures non-negative results, division ensures clean division
-- `services/ScoreCalculator.service.ts` - Calculates scores: base (accuracy) + difficulty bonus (easy: 0, medium: 5, hard: 10) + time bonus (up to 20 points for fast completion)
-- `services/AnswerValidator.service.ts` - Validates answers and provides Chinese feedback messages
-
-**Data Layer:**
-- `database/database.ts` - SQLite3 database initialization
-- `models/User.model.ts` & `models/Score.model.ts` - Data access objects
-- Database file auto-created at `backend/data/arithmetic.db`
-
-**Routes (`routes/`):**
-- `/api/users` - User CRUD
-- `/api/scores` - Score submission and retrieval
-- `/api/questions` - Question generation and answer validation
-- `/api/health` - Health check
-
-**Security:**
-- Helmet for security headers
-- Rate limiting (100 requests per 15 minutes)
-- CORS enabled
-- Parameterized SQL queries
-
-### Type Sharing
-
-TypeScript types are defined in `frontend/src/types/index.ts`:
-- `User`, `Score`, `Difficulty` ('easy' | 'medium' | 'hard'), `OperationType` ('addition' | 'subtraction' | 'multiplication' | 'division')
-
-Backend services export their own type definitions. Keep types in sync between frontend and backend manually.
-
-## Development Notes
-
-- Backend uses `tsx watch` for hot reload during development
-- Frontend Vite proxy configuration handles CORS in development
-- SQLite database is local and not committed to git
-- Backend tests use Jest with ts-jest (no jest config file found - uses package.json defaults)
+## 2. 行为准则 (更新版)
+1. **先计划 (Planning)**: 更新 `task_plan.md`。
+2. **调取知识 (NotebookLM-Skill)**: 检查 `docs/` 文件夹下的教学大纲或需求文档，确保逻辑符合“儿童教育”设定。
+3. **深度思考 (Superpowers)**: 利用多模态推理能力，自检 UI 是否符合儿童操作习惯（如按钮够不够大、颜色是否刺眼）。
+4. **记录发现 (Findings)**: 将上述思考过程记录在 `findings.md`。
+5. **执行修改**: 修改代码。
+6. **同步进度**: 更新 `progress.md`。

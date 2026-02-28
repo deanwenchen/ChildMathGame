@@ -7,7 +7,6 @@ import {
   TextField,
   Button,
   Card,
-  CardContent,
   LinearProgress,
   Alert,
   Grid,
@@ -18,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
 import { Question, Difficulty, OperationType, Feedback } from '../types';
 import { CelebrationEffect } from '../components/animations/CelebrationEffect';
 import { ComboCounter } from '../components/animations/ComboCounter';
@@ -31,7 +31,6 @@ const PracticeGamePage: React.FC = () => {
   const navigate = useNavigate();
   const {
     comboCount,
-    setComboCount,
     resetCombo,
     incrementCombo,
     addAchievement,
@@ -57,6 +56,8 @@ const PracticeGamePage: React.FC = () => {
   const [unlockedAchievementIds, setUnlockedAchievementIds] = useState<string[]>([]);
   const [showCorrectFeedback, setShowCorrectFeedback] = useState(false);
   const [showWrongFeedback, setShowWrongFeedback] = useState(false);
+  const [showCountdown, setShowCountdown] = useState(false);
+  const [countdownValue, setCountdownValue] = useState(3);
 
   // 从 sessionStorage 获取配置
   const config = JSON.parse(sessionStorage.getItem('practiceConfig') || '{}');
@@ -77,6 +78,9 @@ const PracticeGamePage: React.FC = () => {
       // 重置反馈显示状态
       setShowCorrectFeedback(false);
       setShowWrongFeedback(false);
+      // 开始 3 秒倒计时
+      setShowCountdown(true);
+      setCountdownValue(3);
     } catch (error) {
       console.error('获取题目失败:', error);
       setFeedback({
@@ -254,17 +258,43 @@ const PracticeGamePage: React.FC = () => {
     fetchQuestion();
   }, []);
 
-  // 键盘事件：回车提交答案
+  // 倒计时逻辑
+  useEffect(() => {
+    if (showCountdown && countdownValue > 0) {
+      const timer = setTimeout(() => {
+        setCountdownValue(prev => prev - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (showCountdown && countdownValue === 0) {
+      setShowCountdown(false);
+    }
+  }, [showCountdown, countdownValue]);
+
+  // 键盘事件：回车提交答案，数字键快速输入
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // 回车提交
       if (e.key === 'Enter' && !isAnswering && userAnswer.trim() !== '') {
         checkAnswer();
       }
+
+      // 数字键快速输入（0-9 和小数点）
+      if (!isAnswering && !showCountdown && question) {
+        if (/^[0-9]$/.test(e.key) || (e.key === '.' && !userAnswer.includes('.'))) {
+          // 如果已经有答案，自动替换；否则追加
+          setUserAnswer(e.key);
+          e.preventDefault();
+        }
+        // 退格键删除最后一个数字
+        if (e.key === 'Backspace' && userAnswer.length > 0) {
+          setUserAnswer(prev => prev.slice(0, -1));
+        }
+      }
     };
 
-    window.addEventListener('keypress', handleKeyPress);
-    return () => window.removeEventListener('keypress', handleKeyPress);
-  }, [isAnswering, userAnswer]);
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isAnswering, userAnswer, showCountdown, question]);
 
   // 游戏结束自动跳转
   useEffect(() => {
@@ -285,6 +315,30 @@ const PracticeGamePage: React.FC = () => {
     setTimeout(() => setShowWrongFeedback(false), 1000);
     setCurrentStreak(0);
     resetCombo();
+
+    setTimeout(() => {
+      if (questionNumber < totalQuestions) {
+        setQuestionNumber(prev => prev + 1);
+        fetchQuestion();
+      } else {
+        setEndTime(Date.now());
+        setGameCompleted(true);
+      }
+    }, 2000);
+  };
+
+  // 跳过题目处理
+  const handleSkip = () => {
+    if (!question) return;
+
+    setIsAnswering(true);
+    setFeedback({
+      message: `跳过啦～正确答案是 ${question.answer}`,
+      type: 'error'
+    });
+
+    // 跳过不中断连击
+    // 可以将跳过的题目记录到错题本（后续实现）
 
     setTimeout(() => {
       if (questionNumber < totalQuestions) {
@@ -389,25 +443,63 @@ const PracticeGamePage: React.FC = () => {
           )}
         </Box>
 
+        {/* 倒计时覆盖层 */}
+        {showCountdown && (
+          <Box
+            sx={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              bgcolor: 'rgba(0, 0, 0, 0.7)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999
+            }}
+            onClick={() => setShowCountdown(false)}
+          >
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: '10rem',
+                fontWeight: 'bold',
+                color: 'white',
+                animation: 'countdownPulse 1s ease-in-out',
+                '@keyframes countdownPulse': {
+                  '0%': { transform: 'scale(0.5)', opacity: 0 },
+                  '50%': { transform: 'scale(1.2)', opacity: 1 },
+                  '100%': { transform: 'scale(1)', opacity: 1 }
+                }
+              }}
+            >
+              {countdownValue}
+            </Typography>
+          </Box>
+        )}
+
         {/* 答题区域 */}
         {!gameCompleted && (
           <Box sx={{ mb: 3 }}>
             <TextField
               fullWidth
               variant="outlined"
-              size="large"
               placeholder="输入答案..."
               value={userAnswer}
               onChange={(e) => setUserAnswer(e.target.value)}
-              disabled={isAnswering}
+              disabled={isAnswering || showCountdown}
               inputProps={{
                 style: { fontSize: '1.5rem', textAlign: 'center' }
               }}
-              autoFocus
+              autoFocus={!showCountdown}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
                   fontSize: '1.5rem'
+                },
+                '& .MuiOutlinedInput-input': {
+                  padding: '16px 14px'
                 }
               }}
             />
@@ -427,32 +519,57 @@ const PracticeGamePage: React.FC = () => {
                 答案是：{question.answer}
               </Box>
             )}
+            {feedback.type === 'error' && question && (
+              <Box component="span" sx={{ ml: 1, fontWeight: 'bold' }}>
+                正确答案是：{question.answer}
+              </Box>
+            )}
           </Alert>
         )}
 
         {/* 提交按钮 */}
         {!gameCompleted && (
           <Box sx={{ textAlign: 'center' }}>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={checkAnswer}
-              disabled={isAnswering || userAnswer.trim() === ''}
-              sx={{
-                px: 8,
-                py: 2,
-                fontSize: '1.2rem',
-                bgcolor: 'primary.main',
-                '&:hover': {
-                  bgcolor: 'primary.dark',
-                },
-                '&:disabled': {
-                  bgcolor: 'grey.300',
-                }
-              }}
-            >
-              {isAnswering ? '验证中...' : '提交答案 ✅'}
-            </Button>
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Button
+                variant="outlined"
+                onClick={handleSkip}
+                disabled={isAnswering || showCountdown}
+                startIcon={<SkipNextIcon />}
+                sx={{
+                  px: 3,
+                  py: 1.5,
+                  fontSize: '1rem',
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                  '&:disabled': {
+                    color: 'grey.400',
+                  }
+                }}
+              >
+                跳过
+              </Button>
+              <Button
+                variant="contained"
+                onClick={checkAnswer}
+                disabled={isAnswering || userAnswer.trim() === ''}
+                sx={{
+                  px: 6,
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  bgcolor: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                  },
+                  '&:disabled': {
+                    bgcolor: 'grey.300',
+                  }
+                }}
+              >
+                {isAnswering ? '验证中...' : '提交答案 ✅'}
+              </Button>
+            </Box>
           </Box>
         )}
 

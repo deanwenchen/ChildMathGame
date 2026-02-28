@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Box,
@@ -7,13 +7,11 @@ import {
   Card,
   CardContent,
   Grid,
-  Chip,
   Avatar,
   useTheme
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import TimerIcon from '@mui/icons-material/Timer';
 import SchoolIcon from '@mui/icons-material/School';
 import StarIcon from '@mui/icons-material/Star';

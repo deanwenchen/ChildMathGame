@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
-import { User, Difficulty, OperationType, Score } from '../types';
+import { User, Score } from '../types';
 import { Achievement } from '../utils/achievements';
 
 // API 基础 URL
@@ -12,7 +12,7 @@ axios.defaults.baseURL = API_BASE_URL;
 export interface GameContextType {
   currentUser: User | null;
   setCurrentUser: (user: User | null) => void;
-  login: (username: string) => Promise<User>;
+  login: (username: string) => Promise<User | null>;
   logout: () => void;
   submitScore: (scoreData: Omit<Score, 'id' | 'created_at'>) => Promise<void>;
   getScores: (userId: number) => Promise<Score[]>;
@@ -68,7 +68,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // 登录/注册用户
-  const login = async (username: string): Promise<User> => {
+  const login = async (username: string): Promise<User | null> => {
     try {
       // 首先尝试获取现有用户
       let user = await getUserByUsername(username);
@@ -83,6 +83,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
         user = response.data.user;
       }
+
+      if (!user) return null;
 
       setCurrentUser(user);
       return user;

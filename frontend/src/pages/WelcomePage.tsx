@@ -80,7 +80,6 @@ const WelcomePage: React.FC = () => {
             </Typography>
             <TextField
               fullWidth
-              size="large"
               placeholder="你的名字"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -89,7 +88,10 @@ const WelcomePage: React.FC = () => {
               sx={{
                 '& .MuiOutlinedInput-root': {
                   borderRadius: 2,
-                  fontSize: '1.2rem'
+                  fontSize: '1.2rem',
+                  input: {
+                    padding: '14px 16px'
+                  }
                 }
               }}
             />

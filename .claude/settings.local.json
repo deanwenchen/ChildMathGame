@@ -21,7 +21,11 @@
       "Bash(npm install:*)",
       "Bash(npm run lint)",
       "Bash(npm run install:all)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(npm run build)",
+      "WebSearch",
+      "WebFetch(domain:www.cnblogs.com)",
+      "WebFetch(domain:m.baidu.com)"
     ]
   }
 }

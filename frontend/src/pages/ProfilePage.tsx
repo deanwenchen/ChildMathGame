@@ -29,11 +29,6 @@ const ProfilePage: React.FC = () => {
     navigate('/');
   };
 
-  const handleSave = () => {
-    // TODO: 实现保存用户信息
-    alert('用户信息保存成功！');
-  };
-
   if (!currentUser) {
     navigate('/');
     return null;

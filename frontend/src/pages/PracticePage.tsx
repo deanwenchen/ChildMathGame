@@ -11,7 +11,6 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel,
   Alert,
   Chip,
 } from '@mui/material';
@@ -22,7 +21,7 @@ import { Difficulty, OperationType } from '../types';
 
 const PracticePage: React.FC = () => {
   const navigate = useNavigate();
-  const { currentUser, login } = useGame();
+  const { currentUser } = useGame();
 
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [operation, setOperation] = useState<OperationType>('addition');

@@ -21,7 +21,7 @@ import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { currentUser, logout, soundEnabled, setSoundEnabled } = useGame();
+  const { currentUser, soundEnabled, setSoundEnabled } = useGame();
 
   const handlePractice = () => {
     navigate('/practice');
@@ -33,11 +33,6 @@ const HomePage: React.FC = () => {
 
   const handleProfile = () => {
     navigate('/profile');
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
   };
 
   const toggleSound = () => {
