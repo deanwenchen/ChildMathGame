@@ -16,10 +16,12 @@ import SchoolIcon from '@mui/icons-material/School';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { useGame } from '../contexts/GameContext';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { currentUser, logout } = useGame();
+  const { currentUser, logout, soundEnabled, setSoundEnabled } = useGame();
 
   const handlePractice = () => {
     navigate('/practice');
@@ -36,6 +38,10 @@ const HomePage: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const toggleSound = () => {
+    setSoundEnabled(!soundEnabled);
   };
 
   return (
@@ -61,15 +67,31 @@ const HomePage: React.FC = () => {
         </Typography>
       </Box>
 
-      {/* 欢迎信息 */}
+      {/* 欢迎信息和音效开关 */}
       {currentUser && (
-        <Box sx={{ mb: 4, textAlign: 'center' }}>
+        <Box sx={{ mb: 4, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
           <Chip
             icon={<SchoolIcon />}
-            label={`欢迎回来, ${currentUser.username}!`}
+            label={`欢迎回来，${currentUser.username}!`}
             color="primary"
             size="medium"
             sx={{ fontSize: '1.2rem', px: 3, py: 1 }}
+          />
+          <Chip
+            icon={soundEnabled ? <VolumeUpIcon /> : <VolumeOffIcon />}
+            label={soundEnabled ? '音效：开' : '音效：关'}
+            onClick={toggleSound}
+            color={soundEnabled ? 'success' : 'default'}
+            size="medium"
+            sx={{
+              fontSize: '1rem',
+              cursor: 'pointer',
+              bgcolor: soundEnabled ? 'success.main' : 'grey.300',
+              color: soundEnabled ? 'white' : 'grey.600',
+              '&:hover': {
+                bgcolor: soundEnabled ? 'success.dark' : 'grey.400',
+              }
+            }}
           />
         </Box>
       )}

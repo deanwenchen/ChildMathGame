@@ -1,0 +1,57 @@
+
+步骤1：请按照 planning-with-files 的模式，在当前目录创建 task_plan.md、findings.md 和
+
+  progress.md。我的任务是：学习的时候增加多点互动效果。在开始写代码前，请先更新计划文件
+
+如关掉了窗口，下次进来只要
+
+
+
+
+
+
+步骤2：“读取项目根目录下的 task_plan.md、findings.md 和 progress.md。根据这些文件恢复任务上下文，告诉我当前的进度，并准备继续执行。”
+
+
+
+
+
+完美的“断点续传”三部曲
+当你重新打开终端，启动 Claude Code 后，按这个顺序操作：
+
+第一步：检查文件一致性
+先看看代码有没有被改坏（比如出现一半的垃圾字符）。如果有，用 Git 还原一下（这就是为什么写代码一定要配 Git）。
+
+第二步：读取“黑匣子” (Plan Files)
+输入唤醒指令：
+
+"刚才程序意外关闭了。请读取 task_plan.md 和 progress.md，告诉我我们刚才进行到哪一步了，以及有哪些代码可能只改了一半。"
+
+第三步：让 AI 重新扫描并继续
+AI 会读取文件发现：“哦，计划里说我正在改 auth.py，但我看 progress.md 里还没记录‘修改完成’。” 它会主动提议：
+
+“我看 auth.py 的修改还没记录完成，我重新检查一下这个文件，把没写完的代码补全。”
+
+
+3. 如何预防这种“断电”风险？
+在使用 Claude Code 时，有几个职业习惯可以救命：
+
+小步快跑（Atomic Commits）：
+不要让 AI 一次性改 10 个文件。你可以对它说：“请一个文件一个文件地改，每改完一个就在 progress.md 记录一下。” 这样即便断了，你也只损失一个文件的进度。
+
+利用 Git 守护：
+在让 AI 大规模动工前，自己先手动执行 git add . && git commit -m "pre-ai-work"。
+
+
+
+
+
+“我们要给项目加进度条。请按 planning-with-files 模式执行：
+
+先调用 Google Search 搜索 'React 2026 最流行轻量动效库'，把对比结果写入 findings.md。
+
+根据发现，更新 task_plan.md 的步骤。
+
+不要直接写代码，先调用 terminal 运行 npm install [选中的库]。
+
+最后再用 write_file 按照计划修改 ProgressBar.tsx。

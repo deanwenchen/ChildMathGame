@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { User, Difficulty, OperationType, Score } from '../types';
+import { Achievement } from '../utils/achievements';
 
-// API基础URL
+// API 基础 URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-// 配置axios
+// 配置 axios
 axios.defaults.baseURL = API_BASE_URL;
 
 export interface GameContextType {
@@ -15,14 +16,35 @@ export interface GameContextType {
   logout: () => void;
   submitScore: (scoreData: Omit<Score, 'id' | 'created_at'>) => Promise<void>;
   getScores: (userId: number) => Promise<Score[]>;
+  // 连击状态
+  comboCount: number;
+  setComboCount: (count: number) => void;
+  resetCombo: () => void;
+  incrementCombo: () => void;
+  // 成就状态
+  unlockedAchievements: Achievement[];
+  addAchievement: (achievement: Achievement) => void;
+  clearAchievements: () => void;
+  // 音效设置
+  soundEnabled: boolean;
+  setSoundEnabled: (enabled: boolean) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUserState] = useState<User | null>(null);
+  // 连击状态
+  const [comboCount, setComboCount] = useState(0);
+  // 成就状态
+  const [unlockedAchievements, setUnlockedAchievements] = useState<Achievement[]>([]);
+  // 音效设置
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const saved = localStorage.getItem('soundEnabled');
+    return saved ? JSON.parse(saved) : false;
+  });
 
-  // 初始化：从localStorage加载用户
+  // 初始化：从 localStorage 加载用户
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
@@ -30,7 +52,12 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  // 保存用户到localStorage
+  // 持久化音效设置
+  useEffect(() => {
+    localStorage.setItem('soundEnabled', JSON.stringify(soundEnabled));
+  }, [soundEnabled]);
+
+  // 保存用户到 localStorage
   const setCurrentUser = (user: User | null) => {
     setCurrentUserState(user);
     if (user) {
@@ -48,7 +75,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (!user) {
         // 如果用户不存在，创建新用户
-        // 默认值：年龄8岁，年级2年级（可根据实际情况调整）
+        // 默认值：年龄 8 岁，年级 2 年级（可根据实际情况调整）
         const response = await axios.post('/users', {
           username,
           age: 8,
@@ -82,6 +109,19 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCurrentUser(null);
   };
 
+  // 连击操作
+  const resetCombo = () => setComboCount(0);
+  const incrementCombo = () => setComboCount(prev => prev + 1);
+
+  // 成就操作
+  const addAchievement = (achievement: Achievement) => {
+    setUnlockedAchievements(prev => {
+      if (prev.some(a => a.id === achievement.id)) return prev;
+      return [...prev, achievement];
+    });
+  };
+  const clearAchievements = () => setUnlockedAchievements([]);
+
   // 提交成绩
   const submitScore = async (scoreData: Omit<Score, 'id' | 'created_at'>) => {
     try {
@@ -111,7 +151,16 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         login,
         logout,
         submitScore,
-        getScores
+        getScores,
+        comboCount,
+        setComboCount,
+        resetCombo,
+        incrementCombo,
+        unlockedAchievements,
+        addAchievement,
+        clearAchievements,
+        soundEnabled,
+        setSoundEnabled
       }}
     >
       {children}
