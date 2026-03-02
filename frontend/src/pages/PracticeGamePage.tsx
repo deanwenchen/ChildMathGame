@@ -603,7 +603,7 @@ const PracticeGamePage: React.FC = () => {
       </Card>
 
       {/* 庆祝动画 */}
-      <CelebrationEffect trigger={showCelebration} intensity="medium" />
+      {showCelebration && <CelebrationEffect intensity="medium" />}
 
       {/* 连击计数器 */}
       <ComboCounter combo={comboCount} show={comboCount >= 2} />

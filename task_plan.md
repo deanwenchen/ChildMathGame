@@ -288,3 +288,79 @@ frontend/src/
 
 **修改文件**: `frontend/src/pages/PracticeGamePage.tsx`
 **新增代码行数**: 约 100 行
+
+---
+
+## 新增：凑十法专项练习模式（2026-03-02）
+
+### 方案选择：趣味加强版（闯关冒险）✅ 已确认
+
+用户已确认选择**方案二**，详细设计如下：
+
+#### 核心功能
+| 功能 | 描述 | 优先级 |
+|------|------|--------|
+| 四道关卡 | 9 加几→8 加几→7 加几→6 加几，顺序解锁 | P0 |
+| 星级评价 | 每关根据正确率获得 1-3 颗星 | P0 |
+| 连击系统 | 连续答对获得 Combo 加成 | P0 |
+| 提示道具 | "凑十镜"显示分解步骤（每关 1 次） | P1 |
+| 时间冻结 | 暂停倒计时 5 秒（每关 1 次） | P1 |
+| 答错解析 | 动态演示正确分解过程 | P0 |
+| 通关勋章 | 完成所有关卡解锁"凑十法大师" | P1 |
+
+#### 凑十法题目生成规则
+根据 `pedagogy.md`：
+- **9 加几**: 9+2, 9+3, 9+4, 9+5, 9+6, 9+7, 9+8, 9+9
+- **8 加几**: 8+3, 8+4, 8+5, 8+6, 8+7, 8+8, 8+9
+- **7 加几**: 7+4, 7+5, 7+6, 7+7, 7+8, 7+9
+- **6 加几**: 6+5, 6+6, 6+7, 6+8, 6+9
+
+#### 技术实现方案
+- **路由**: 新增 `/cuoshi-friendship`（凑十法闯关）
+- **页面组件**: `CuoshiFriendshipPage.tsx`（关卡选择页）
+- **游戏组件**: `CuoshiGamePage.tsx`（答题界面）
+- **状态管理**: 扩展 `GameContext` 添加关卡进度、星星收集
+- **数据存储**: `localStorage` 持久化关卡进度
+
+#### 需要新建的文件
+```
+frontend/src/
+├── pages/
+│   ├── CuoshiFriendshipPage.tsx    # 关卡选择页
+│   └── CuoshiGamePage.tsx          # 凑十法游戏页
+├── components/
+│   └── cuoshi/
+│       ├── LevelSelector.tsx       # 关卡选择器
+│       ├── StarRating.tsx          # 星级评价组件
+│       ├── CuoshiHint.tsx          # 凑十提示组件
+│       └── DecompositionBox.tsx    # 分解框（视觉辅助）
+├── utils/
+│   └── cuoshi.ts                   # 凑十法题目生成逻辑
+└── contexts/
+    └── GameContext.tsx             # 扩展：关卡进度状态
+```
+
+---
+
+## 阶段 5：凑十法专项练习（待实现）
+
+### 5.1 核心组件开发（P0）
+- [ ] `utils/cuoshi.ts` - 凑十法题目生成
+- [ ] `LevelSelector.tsx` - 关卡选择器（4 大关卡）
+- [ ] `StarRating.tsx` - 星级评价组件
+- [ ] `CuoshiFriendshipPage.tsx` - 关卡选择页
+- [ ] `CuoshiGamePage.tsx` - 游戏页（含分解框）
+
+### 5.2 视觉辅助开发（P0）
+- [ ] `DecompositionBox.tsx` - 凑十分解框（pedagogy.md 表格可视化）
+- [ ] 答错解析弹窗 - 动态演示分解步骤
+
+### 5.3 游戏机制开发（P1）
+- [ ] 道具系统：提示镜、时间冻结
+- [ ] 关卡进度持久化（localStorage）
+- [ ] 通关勋章系统
+
+### 5.4 路由集成
+- [ ] App.tsx 添加新路由
+- [ ] HomePage 添加入口卡片
+- [ ] PracticePage 添加凑十法模式选项

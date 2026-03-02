@@ -151,7 +151,7 @@ const GameResultPage: React.FC = () => {
         }}
       >
         {/* 庆祝动画 */}
-        <CelebrationEffect trigger={showCelebration} intensity="high" />
+        {showCelebration && <CelebrationEffect intensity="high" />}
 
         {/* 标题 */}
         <Box sx={{ textAlign: 'center', mb: 4 }}>

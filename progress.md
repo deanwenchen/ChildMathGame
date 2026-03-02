@@ -7,6 +7,40 @@
 
 ---
 
+## 凑十法专项练习模式进度（2026-03-02）
+
+**当前阶段**: 阶段 3 - 构建完成，准备测试 ✅
+**分支**: `feature/cuoshi-friendship`
+
+### ✅ 已完成
+- [x] 使用 Superpowers 进行头脑风暴（3 个方案）
+- [x] 用户确认方案二（趣味加强版）
+- [x] 创建 git 分支 `feature/cuoshi-friendship`
+- [x] 更新 task_plan.md 添加凑十法计划
+- [x] 更新 findings.md 添加方案详情
+- [x] 教育合规性校验（基于 pedagogy.md）
+- [x] utils/cuoshi.ts - 凑十法题目生成工具
+- [x] components/cuoshi/DecompositionBox.tsx - 分解框组件
+- [x] components/cuoshi/StarRating.tsx - 星级评价组件
+- [x] components/cuoshi/LevelCompleteDialog.tsx - 关卡通关弹窗
+- [x] components/cuoshi/CuoshiHint.tsx - 提示组件
+- [x] components/cuoshi/LevelSelector.tsx - 关卡选择器
+- [x] pages/CuoshiGamePage.tsx - 游戏页面
+- [x] pages/CuoshiFriendshipPage.tsx - 关卡选择页面
+- [x] App.tsx - 添加路由 /cuoshi-friendship
+- [x] HomePage.tsx - 添加入口卡片
+- [x] TypeScript 编译检查通过
+- [x] Vite 构建成功
+
+### 🔄 进行中
+- [ ] 功能测试（手动测试）
+- [ ] Git 提交
+
+### ⏳ 待开始
+- [ ] 最终测试和优化
+
+---
+
 ## 详细进度
 
 ### ✅ 已完成
