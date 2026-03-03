@@ -16,11 +16,12 @@ import { useNavigate } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SchoolIcon from '@mui/icons-material/School';
+import BookIcon from '@mui/icons-material/Book';
 import { useGame } from '../contexts/GameContext';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const { currentUser, logout } = useGame();
+  const { currentUser, logout, mistakeStats, pendingReviewCount } = useGame();
 
   const [username, setUsername] = useState(currentUser?.username || '');
 
@@ -144,6 +145,51 @@ const ProfilePage: React.FC = () => {
               <Chip label="待解锁" variant="outlined" color="default" />
               <Chip label="待解锁" variant="outlined" color="default" />
             </Box>
+          </Box>
+
+          <Divider sx={{ mb: 3 }} />
+
+          {/* 错题本入口 */}
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              📚 错题本
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: 'action.hover' }
+                  }}
+                  onClick={() => navigate('/mistake-review')}
+                >
+                  <CardContent sx={{ textAlign: 'center', py: 2 }}>
+                    <BookIcon color="primary" sx={{ mb: 1 }} />
+                    <Typography variant="h6">错题复习</Typography>
+                    <Typography variant="h5" fontWeight="bold" color={pendingReviewCount > 0 ? 'error' : 'success'}>
+                      {pendingReviewCount}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      待复习
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={6}>
+                <Card variant="outlined">
+                  <CardContent sx={{ textAlign: 'center', py: 2 }}>
+                    <Typography variant="h6">总错题数</Typography>
+                    <Typography variant="h5" fontWeight="bold">
+                      {mistakeStats.totalMistakes}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      已掌握：{mistakeStats.masteredCount}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
           </Box>
 
           <Divider sx={{ mb: 3 }} />
