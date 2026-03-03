@@ -27,6 +27,10 @@ const HomePage: React.FC = () => {
     navigate('/practice');
   };
 
+  const handleCuoshiFriendship = () => {
+    navigate('/cuoshi-friendship');
+  };
+
   const handleScores = () => {
     navigate('/scores');
   };
@@ -137,6 +141,50 @@ const HomePage: React.FC = () => {
           </Card>
         </Grid>
 
+        {/* 凑十法闯关卡片 */}
+        <Grid item xs={12}>
+          <Card
+            sx={{
+              bgcolor: 'secondary.light',
+              color: 'white',
+              transition: 'transform 0.3s',
+              '&:hover': {
+                transform: 'scale(1.02)',
+              },
+            }}
+          >
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <EmojiEventsIcon sx={{ fontSize: 40, mr: 2 }} />
+                <Typography variant="h3" fontWeight="bold">
+                  凑十法闯关
+                </Typography>
+              </Box>
+              <Typography variant="body1" sx={{ opacity: 0.9 }}>
+                趣味闯关模式，掌握凑十法口诀：看大数，分小数，凑成十，加剩数！
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={handleCuoshiFriendship}
+                fullWidth
+                sx={{
+                  bgcolor: 'white',
+                  color: 'secondary.main',
+                  fontWeight: 'bold',
+                  '&:hover': {
+                    bgcolor: '#f0f0f0',
+                  },
+                }}
+              >
+                🎮 开始闯关
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+
         {/* 其他功能卡片 */}
         <Grid item xs={12} sm={6}>
           <Card
@@ -214,6 +262,9 @@ const HomePage: React.FC = () => {
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
           智能计分系统，记录每一次进步
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          🎯 新增：凑十法专项练习，掌握进位加法精髓！
         </Typography>
       </Box>
     </Container>

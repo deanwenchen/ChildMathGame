@@ -10,6 +10,7 @@ import GameResultPage from './pages/GameResultPage';
 import ScorePage from './pages/ScorePage';
 import ProfilePage from './pages/ProfilePage';
 import WelcomePage from './pages/WelcomePage';
+import CuoshiFriendshipPage from './pages/CuoshiFriendshipPage';
 
 // 创建主题（儿童友好的颜色）
 const theme = createTheme({
@@ -133,6 +134,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/cuoshi-friendship"
+              element={
+                <ProtectedRoute>
+                  <CuoshiFriendshipPage />
                 </ProtectedRoute>
               }
             />

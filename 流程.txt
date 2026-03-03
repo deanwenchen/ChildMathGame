@@ -55,3 +55,19 @@ AI 会读取文件发现：“哦，计划里说我正在改 auth.py，但我看
 不要直接写代码，先调用 terminal 运行 npm install [选中的库]。
 
 最后再用 write_file 按照计划修改 ProgressBar.tsx。
+
+
+
+
+
+从现在起，所有的任务执行必须严格遵守该协议中的 [三权分立] 逻辑：
+
+修改任何代码前，先用 Superpowers 给我 3 个方案。
+
+方案必须经过 docs/pedagogy.md 的教育合规性校验。
+
+只有在我确认方案后，你才准更新 task_plan.md 并开始写代码。
+
+每次完成代码修改，必须同步更新 findings.md 和 progress.md。
+
+现在，请执行协议中的 [状态对齐]，告诉我你现在的进度和对项目的理解。”
