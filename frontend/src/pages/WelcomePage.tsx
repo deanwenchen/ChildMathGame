@@ -34,9 +34,12 @@ const WelcomePage: React.FC = () => {
     setError('');
 
     try {
-      await login(username.trim());
+      console.log('开始登录，用户名:', username.trim());
+      const result = await login(username.trim());
+      console.log('登录结果:', result);
       // login 成功后会自动跳转到主页
     } catch (err) {
+      console.error('登录错误:', err);
       setError('登录失败，请重试');
       setLoading(false);
     }

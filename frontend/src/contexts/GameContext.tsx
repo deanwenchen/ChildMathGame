@@ -70,26 +70,35 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // 登录/注册用户
   const login = async (username: string): Promise<User | null> => {
     try {
+      console.log('[GameContext] 开始登录，username:', username);
+
       // 首先尝试获取现有用户
       let user = await getUserByUsername(username);
+      console.log('[GameContext] getUserByUsername 结果:', user);
 
       if (!user) {
         // 如果用户不存在，创建新用户
         // 默认值：年龄 8 岁，年级 2 年级（可根据实际情况调整）
+        console.log('[GameContext] 用户不存在，创建新用户...');
         const response = await axios.post('/users', {
           username,
           age: 8,
           grade: 2
         });
+        console.log('[GameContext] 创建用户响应:', response.data);
         user = response.data.user;
       }
 
-      if (!user) return null;
+      if (!user) {
+        console.log('[GameContext] 登录失败：user 为 null');
+        return null;
+      }
 
+      console.log('[GameContext] 登录成功，设置 currentUser:', user);
       setCurrentUser(user);
       return user;
     } catch (error) {
-      console.error('登录失败:', error);
+      console.error('[GameContext] 登录失败:', error);
       throw error;
     }
   };
