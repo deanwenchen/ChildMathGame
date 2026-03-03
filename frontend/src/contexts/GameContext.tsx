@@ -1,7 +1,15 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import axios from 'axios';
-import { User, Score } from '../types';
+import { User, Score, MistakeRecord, MistakeBookStats, ErrorType } from '../types';
 import { Achievement } from '../utils/achievements';
+import {
+  captureMistake as captureMistakeUtil,
+  recordReview as recordReviewUtil,
+  getReviewQueue as getReviewQueueUtil,
+  getMistakeBookStats as getStatsUtil,
+  loadMistakeBook as loadUtil,
+  saveMistakeBook as saveUtil
+} from '../utils/mistakeAnalyzer';
 
 // API 基础 URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -28,6 +36,20 @@ export interface GameContextType {
   // 音效设置
   soundEnabled: boolean;
   setSoundEnabled: (enabled: boolean) => void;
+  // 错题本状态
+  mistakes: MistakeRecord[];
+  mistakeStats: MistakeBookStats;
+  pendingReviewCount: number;
+  // 错题本操作
+  captureMistake: (
+    expression: string,
+    userAnswer: number,
+    correctAnswer: number,
+    errorType?: ErrorType
+  ) => void;
+  recordReview: (mistakeId: string, isCorrect: boolean) => void;
+  getReviewQueue: () => MistakeRecord[];
+  refreshMistakeBook: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -43,6 +65,22 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const saved = localStorage.getItem('soundEnabled');
     return saved ? JSON.parse(saved) : false;
   });
+  // 错题本状态
+  const [mistakes, setMistakes] = useState<MistakeRecord[]>([]);
+  const [mistakeStats, setMistakeStats] = useState<MistakeBookStats>({
+    totalMistakes: 0,
+    pendingReview: 0,
+    masteredCount: 0,
+    errorTypeDistribution: {
+      decomposition_error: 0,
+      calculation_error: 0,
+      step_missing: 0,
+      timeout: 0,
+      unknown: 0
+    },
+    todayReviewCompleted: 0
+  });
+  const [pendingReviewCount, setPendingReviewCount] = useState(0);
 
   // 初始化：从 localStorage 加载用户
   useEffect(() => {
@@ -56,6 +94,17 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     localStorage.setItem('soundEnabled', JSON.stringify(soundEnabled));
   }, [soundEnabled]);
+
+  // 初始化：加载错题本
+  useEffect(() => {
+    const loadMistakes = () => {
+      const stored = loadUtil();
+      setMistakes(stored);
+      setMistakeStats(getStatsUtil(stored));
+      setPendingReviewCount(getReviewQueueUtil(stored).length);
+    };
+    loadMistakes();
+  }, []);
 
   // 保存用户到 localStorage
   const setCurrentUser = (user: User | null) => {
@@ -133,6 +182,40 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
   const clearAchievements = () => setUnlockedAchievements([]);
 
+  // 错题本操作
+  const captureMistake = useCallback((
+    expression: string,
+    userAnswer: number,
+    correctAnswer: number,
+    errorType?: ErrorType
+  ) => {
+    const updated = captureMistakeUtil(expression, userAnswer, correctAnswer, mistakes);
+    setMistakes(updated);
+    setMistakeStats(getStatsUtil(updated));
+    setPendingReviewCount(getReviewQueueUtil(updated).length);
+  }, [mistakes]);
+
+  const recordReview = useCallback((
+    mistakeId: string,
+    isCorrect: boolean
+  ) => {
+    const updated = recordReviewUtil(mistakeId, isCorrect, mistakes);
+    setMistakes(updated);
+    setMistakeStats(getStatsUtil(updated));
+    setPendingReviewCount(getReviewQueueUtil(updated).length);
+  }, [mistakes]);
+
+  const getReviewQueue = useCallback((): MistakeRecord[] => {
+    return getReviewQueueUtil(mistakes);
+  }, [mistakes]);
+
+  const refreshMistakeBook = useCallback(() => {
+    const stored = loadUtil();
+    setMistakes(stored);
+    setMistakeStats(getStatsUtil(stored));
+    setPendingReviewCount(getReviewQueueUtil(stored).length);
+  }, []);
+
   // 提交成绩
   const submitScore = async (scoreData: Omit<Score, 'id' | 'created_at'>) => {
     try {
@@ -171,7 +254,15 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         addAchievement,
         clearAchievements,
         soundEnabled,
-        setSoundEnabled
+        setSoundEnabled,
+        // 错题本
+        mistakes,
+        mistakeStats,
+        pendingReviewCount,
+        captureMistake,
+        recordReview,
+        getReviewQueue,
+        refreshMistakeBook
       }}
     >
       {children}

@@ -34,7 +34,8 @@ const PracticeGamePage: React.FC = () => {
     resetCombo,
     incrementCombo,
     addAchievement,
-    soundEnabled
+    soundEnabled,
+    captureMistake
   } = useGame();
   const sound = useSound();
 
@@ -162,6 +163,13 @@ const PracticeGamePage: React.FC = () => {
 
         setCurrentStreak(0);
         resetCombo();
+
+        // 捕获错题到错题本
+        captureMistake(
+          question.expression,
+          parseFloat(userAnswer),
+          question.answer
+        );
 
         // 播放答错音效
         if (soundEnabled) {

@@ -11,6 +11,8 @@ import ScorePage from './pages/ScorePage';
 import ProfilePage from './pages/ProfilePage';
 import WelcomePage from './pages/WelcomePage';
 import CuoshiFriendshipPage from './pages/CuoshiFriendshipPage';
+import MistakeBookPage from './pages/MistakeBookPage';
+import MistakeReviewPage from './pages/MistakeReviewPage';
 
 // 创建主题（儿童友好的颜色）
 const theme = createTheme({
@@ -142,6 +144,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CuoshiFriendshipPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mistake-book"
+              element={
+                <ProtectedRoute>
+                  <MistakeBookPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mistake-review"
+              element={
+                <ProtectedRoute>
+                  <MistakeReviewPage />
                 </ProtectedRoute>
               }
             />

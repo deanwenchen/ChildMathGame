@@ -364,3 +364,62 @@ frontend/src/
 - [ ] App.tsx 添加新路由
 - [ ] HomePage 添加入口卡片
 - [ ] PracticePage 添加凑十法模式选项
+
+---
+
+## 阶段 6：错题本系统（新）
+
+### 6.1 数据层（P0）
+- [ ] `frontend/src/types/index.ts` - 添加错题本类型定义
+  - `WrongQuestion` 接口：题目、用户答案、正确答案、错误类型等
+  - `ReviewSchedule` 接口：复习间隔配置
+  - `ErrorType` 枚举：计算错误、概念错误、进退位错误、其他
+- [ ] `frontend/src/utils/wrongQuestionStorage.ts` - LocalStorage  CRUD 操作
+  - `addWrongQuestion()` - 录入新错题
+  - `getWrongQuestions()` - 获取错题列表
+  - `updateReviewStatus()` - 更新复习状态
+  - `removeMasteredQuestion()` - 移除已掌握题目
+  - `getDueQuestions()` - 获取今日应复习题目
+
+### 6.2 业务逻辑层（P0）
+- [ ] `frontend/src/hooks/useWrongQuestion.ts` - 错题管理 Hook
+  - 错题录入逻辑
+  - 复习状态追踪
+  - 艾宾浩斯间隔计算
+- [ ] `frontend/src/utils/errorTypeClassifier.ts` - 错误类型自动分类
+  - 基于答案差异分析
+  - 基于题型分析（进退位题目）
+  - 基于作答时间分析
+
+### 6.3 UI 层（P1）
+- [ ] `frontend/src/pages/WrongQuestionBookPage.tsx` - 错题本主页
+  - 错题列表展示
+  - 按错误类型筛选
+  - 按日期筛选
+  - 复习入口
+- [ ] `frontend/src/components/wrongQuestion/`
+  - `WrongQuestionCard.tsx` - 错题卡片组件
+  - `ErrorTypeBadge.tsx` - 错误类型标签
+  - `ReviewStatusIndicator.tsx` - 复习进度指示器
+  - `ReviewSession.tsx` - 复习会话组件
+
+### 6.4 复习算法（P0）
+- [ ] `frontend/src/utils/reviewScheduler.ts` - 复习调度算法
+  - 艾宾浩斯间隔计算
+  - 优先级排序（即将过期优先）
+  - 每日复习量控制（上限 5 题）
+
+### 6.5 积分成系统（P1）
+- [ ] 复习奖励机制
+  - 复习正确：+10 分
+  - 连续复习正确：额外加成
+  - 掌握题目：+50 分
+- [ ] 复习勋章
+  - "持之以恒"：连续复习 7 天
+  - "温故知新"：掌握 50 道错题
+  - "完美复习"：单次复习全对
+
+### 6.6 数据导出（P2）
+- [ ] 导出错题本为 JSON
+- [ ] 导出为可打印 PDF（家长用）
+- [ ] 导入功能（多设备同步）

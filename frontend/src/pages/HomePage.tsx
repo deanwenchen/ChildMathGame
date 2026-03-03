@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import SchoolIcon from '@mui/icons-material/School';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { useGame } from '../contexts/GameContext';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
@@ -29,6 +30,10 @@ const HomePage: React.FC = () => {
 
   const handleCuoshiFriendship = () => {
     navigate('/cuoshi-friendship');
+  };
+
+  const handleMistakeBook = () => {
+    navigate('/mistake-book');
   };
 
   const handleScores = () => {
@@ -196,6 +201,37 @@ const HomePage: React.FC = () => {
             }}
           >
             <CardContent sx={{ textAlign: 'center', py: 4 }}>
+              <AutoFixHighIcon sx={{ fontSize: 48, color: 'warning.main', mb: 2 }} />
+              <Typography variant="h4" gutterBottom>
+                错题本
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                定期复习错题，巩固知识点
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={handleMistakeBook}
+                fullWidth
+              >
+                查看错题
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <Card
+            sx={{
+              transition: 'transform 0.3s',
+              '&:hover': {
+                transform: 'scale(1.02)',
+              },
+            }}
+          >
+            <CardContent sx={{ textAlign: 'center', py: 4 }}>
               <EmojiEventsIcon sx={{ fontSize: 48, color: 'primary.main', mb: 2 }} />
               <Typography variant="h4" gutterBottom>
                 我的成绩
@@ -212,37 +248,6 @@ const HomePage: React.FC = () => {
                 fullWidth
               >
                 查看成绩
-              </Button>
-            </CardActions>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <Card
-            sx={{
-              transition: 'transform 0.3s',
-              '&:hover': {
-                transform: 'scale(1.02)',
-              },
-            }}
-          >
-            <CardContent sx={{ textAlign: 'center', py: 4 }}>
-              <SchoolIcon sx={{ fontSize: 48, color: 'secondary.main', mb: 2 }} />
-              <Typography variant="h4" gutterBottom>
-                个人资料
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                管理账户和学习设置
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={handleProfile}
-                fullWidth
-              >
-                进入资料
               </Button>
             </CardActions>
           </Card>
@@ -265,6 +270,9 @@ const HomePage: React.FC = () => {
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
           🎯 新增：凑十法专项练习，掌握进位加法精髓！
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          📝 错题本系统，基于艾宾浩斯遗忘曲线智能复习！
         </Typography>
       </Box>
     </Container>
