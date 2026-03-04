@@ -26,11 +26,9 @@ import {
   PlayArrow as PlayIcon,
   Star as StarIcon,
 } from '@mui/icons-material';
-import { MistakeRecord, MistakeFiltersState, OperationType, Difficulty, ErrorType } from '../../types';
-import { MistakeCard } from '../../components/mistakes/MistakeCard';
-import { MistakeFilters } from '../../components/mistakes/MistakeFilters';
-import { ReviewButton } from '../../components/mistakes/ReviewButton';
-import { useGame } from '../../contexts/GameContext';
+import { MistakeRecord, MistakeFiltersState, OperationType, Difficulty, ErrorType } from '../types';
+import { MistakeCard, MistakeFilters, ReviewButton } from '../components/mistakes';
+import { useGame } from '../contexts/GameContext';
 
 // 模拟错题数据（后续会连接 API）
 const generateMockMistakes = (): MistakeRecord[] => {
