@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { GameProvider, useGame } from './contexts/GameContext';
+import { SocialProvider } from './contexts/SocialContext';
 import HomePage from './pages/HomePage';
 import PracticePage from './pages/PracticePage';
 import PracticeGamePage from './pages/PracticeGamePage';
@@ -13,6 +14,9 @@ import WelcomePage from './pages/WelcomePage';
 import CuoshiFriendshipPage from './pages/CuoshiFriendshipPage';
 import MistakeBookPage from './pages/MistakeBookPage';
 import MistakeReviewPage from './pages/MistakeReviewPage';
+import FriendsPage from './pages/FriendsPage';
+import LeaderboardPage from './pages/LeaderboardPage';
+import PKMatchPage from './pages/PKMatchPage';
 
 // 创建主题（儿童友好的颜色）
 const theme = createTheme({
@@ -81,90 +85,116 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <GameProvider>
-        <Router>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <HomeRoute>
-                  <WelcomePage />
-                </HomeRoute>
-              }
-            />
-            <Route
-              path="/home"
-              element={
-                <ProtectedRoute>
-                  <HomePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/practice"
-              element={
-                <ProtectedRoute>
-                  <PracticePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/practice-game"
-              element={
-                <ProtectedRoute>
-                  <PracticeGamePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/game-result"
-              element={
-                <ProtectedRoute>
-                  <GameResultPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/scores"
-              element={
-                <ProtectedRoute>
-                  <ScorePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/cuoshi-friendship"
-              element={
-                <ProtectedRoute>
-                  <CuoshiFriendshipPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/mistake-book"
-              element={
-                <ProtectedRoute>
-                  <MistakeBookPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/mistake-review"
-              element={
-                <ProtectedRoute>
-                  <MistakeReviewPage />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </Router>
+        <SocialProvider>
+          <Router>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <HomeRoute>
+                    <WelcomePage />
+                  </HomeRoute>
+                }
+              />
+              <Route
+                path="/home"
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/practice"
+                element={
+                  <ProtectedRoute>
+                    <PracticePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/practice-game"
+                element={
+                  <ProtectedRoute>
+                    <PracticeGamePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/game-result"
+                element={
+                  <ProtectedRoute>
+                    <GameResultPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/scores"
+                element={
+                  <ProtectedRoute>
+                    <ScorePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cuoshi-friendship"
+                element={
+                  <ProtectedRoute>
+                    <CuoshiFriendshipPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/mistake-book"
+                element={
+                  <ProtectedRoute>
+                    <MistakeBookPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/mistake-review"
+                element={
+                  <ProtectedRoute>
+                    <MistakeReviewPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/friends"
+                element={
+                  <ProtectedRoute>
+                    <FriendsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/leaderboard"
+                element={
+                  <ProtectedRoute>
+                    <LeaderboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/pk-match"
+                element={
+                  <ProtectedRoute>
+                    <PKMatchPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Router>
+        </SocialProvider>
       </GameProvider>
     </ThemeProvider>
   );

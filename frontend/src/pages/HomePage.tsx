@@ -16,13 +16,17 @@ import SchoolIcon from '@mui/icons-material/School';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import PeopleIcon from '@mui/icons-material/People';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import { useGame } from '../contexts/GameContext';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import { useSocial } from '../contexts/SocialContext';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser, soundEnabled, setSoundEnabled } = useGame();
+  const { onlineFriends, friendRequests } = useSocial();
 
   const handlePractice = () => {
     navigate('/practice');
@@ -42,6 +46,14 @@ const HomePage: React.FC = () => {
 
   const handleProfile = () => {
     navigate('/profile');
+  };
+
+  const handleFriends = () => {
+    navigate('/friends');
+  };
+
+  const handleLeaderboard = () => {
+    navigate('/leaderboard');
   };
 
   const toggleSound = () => {
@@ -248,6 +260,90 @@ const HomePage: React.FC = () => {
                 fullWidth
               >
                 查看成绩
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+
+        {/* 社交功能卡片 - 好友 */}
+        <Grid item xs={12} sm={6}>
+          <Card
+            sx={{
+              transition: 'transform 0.3s',
+              bgcolor: '#E3F2FD',
+              border: '2px solid #2196F3',
+              '&:hover': {
+                transform: 'scale(1.02)',
+              },
+            }}
+          >
+            <CardContent sx={{ textAlign: 'center', py: 4 }}>
+              <Chip
+                label={onlineFriends.length > 0 ? `${onlineFriends.length}人在线` : '好友'}
+                color="info"
+                size="small"
+                sx={{ mb: 1 }}
+              />
+              <PeopleIcon sx={{ fontSize: 48, color: 'info.main', mb: 2 }} />
+              <Typography variant="h4" gutterBottom>
+                我的好友
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                和朋友一起学习，互相加油鼓励
+              </Typography>
+              {friendRequests.length > 0 && (
+                <Chip
+                  label={`${friendRequests.length}个好友请求`}
+                  color="error"
+                  size="small"
+                  sx={{ mt: 1 }}
+                />
+              )}
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="outlined"
+                size="large"
+                color="info"
+                onClick={handleFriends}
+                fullWidth
+              >
+                查看好友
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+
+        {/* 社交功能卡片 - 排行榜 */}
+        <Grid item xs={12} sm={6}>
+          <Card
+            sx={{
+              transition: 'transform 0.3s',
+              bgcolor: '#FFF8E1',
+              border: '2px solid #FFC107',
+              '&:hover': {
+                transform: 'scale(1.02)',
+              },
+            }}
+          >
+            <CardContent sx={{ textAlign: 'center', py: 4 }}>
+              <LeaderboardIcon sx={{ fontSize: 48, color: 'warning.main', mb: 2 }} />
+              <Typography variant="h4" gutterBottom>
+                排行榜
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                和小伙伴们比一比，看谁最厉害
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="outlined"
+                size="large"
+                color="warning"
+                onClick={handleLeaderboard}
+                fullWidth
+              >
+                查看排行
               </Button>
             </CardActions>
           </Card>

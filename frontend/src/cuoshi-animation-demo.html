@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>凑十法动画演示 - 9+4</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #FFB7B2 0%, #FFDAC1 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+
+    /* 主容器 */
+    .cuoshi-container {
+      background: white;
+      border-radius: 30px;
+      padding: 40px 60px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    /* 口诀提示 */
+    .koujue-bar {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 30px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 15px;
+    }
+
+    .koujue-step {
+      font-size: 0.9rem;
+      color: #888;
+      padding: 8px 16px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .koujue-step.active {
+      background: #B2E2F2;
+      color: #333;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(178, 226, 242, 0.5);
+    }
+
+    .koujue-step.completed {
+      background: #C1E1C1;
+      color: #2d5a2d;
+    }
+
+    /* 题目区域 */
+    .problem-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+      border-radius: 20px;
+    }
+
+    .number {
+      font-size: 4rem;
+      font-weight: bold;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      transition: all 0.5s ease;
+    }
+
+    .number.big {
+      color: #fff;
+      background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .number.big.highlight {
+      animation: pulse-highlight 0.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse-highlight {
+      from {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+      }
+      to {
+        transform: scale(1.1);
+        box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+      }
+    }
+
+    .number.small {
+      color: #333;
+      background: #f0f0f0;
+      position: relative;
+    }
+
+    .operator, .equals {
+      font-size: 3rem;
+      color: #888;
+      font-weight: bold;
+    }
+
+    /* 分解区域 */
+    .decomposition-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+      min-height: 120px;
+    }
+
+    .number-block {
+      width: 60px;
+      height: 60px;
+      background: #B2E2F2;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+      transition: all 0.5s ease;
+    }
+
+    .number-block.splitting {
+      animation: split-shake 0.5s ease-in-out;
+    }
+
+    @keyframes split-shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .split-container {
+      display: flex;
+      gap: 80px;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.5s ease;
+    }
+
+    .split-container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .split-part {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      transition: all 0.5s ease;
+    }
+
+    .split-part.part-1 {
+      background: #B2E2F2;
+      color: #333;
+      box-shadow: 0 3px 10px rgba(178, 226, 242, 0.5);
+    }
+
+    .split-part.part-1.moving {
+      animation: fly-to-big 1s ease-in-out forwards;
+    }
+
+    @keyframes fly-to-big {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      50% {
+        transform: translate(-60px, -30px) scale(1.2);
+      }
+      100% {
+        transform: translate(-120px, -60px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    .split-part.part-3 {
+      background: #E8F5E9;
+      color: #2d5a2d;
+    }
+
+    .split-part.part-3.flying {
+      animation: fly-to-result 1s ease-in-out 0.5s forwards;
+    }
+
+    @keyframes fly-to-result {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(100px, 0);
+      }
+    }
+
+    /* 凑十区域 */
+    .maketen-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+      min-height: 70px;
+      opacity: 0;
+      transition: all 0.5s ease;
+    }
+
+    .maketen-section.visible {
+      opacity: 1;
+    }
+
+    .result-10 {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+      animation: pop-in 0.5s ease-out;
+    }
+
+    @keyframes pop-in {
+      0% {
+        transform: scale(0);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .maketen-plus {
+      font-size: 2rem;
+      color: #888;
+    }
+
+    .remainder {
+      width: 50px;
+      height: 50px;
+      background: #B2E2F2;
+      color: #333;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      opacity: 0;
+      transform: translateX(-30px);
+      transition: all 0.5s ease;
+    }
+
+    .remainder.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* 答案区域 */
+    .answer-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      padding-top: 20px;
+      border-top: 3px dashed #eee;
+      opacity: 0;
+      transition: all 0.5s ease 0.3s;
+    }
+
+    .answer-section.visible {
+      opacity: 1;
+    }
+
+    .final-answer {
+      width: 90px;
+      height: 90px;
+      background: linear-gradient(135deg, #FFB7B2 0%, #FF9E99 100%);
+      color: white;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      box-shadow: 0 6px 20px rgba(255, 183, 178, 0.5);
+      animation: answer-pop 0.6s ease-out;
+    }
+
+    @keyframes answer-pop {
+      0% {
+        transform: scale(0) rotate(-10deg);
+      }
+      50% {
+        transform: scale(1.15) rotate(5deg);
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    /* 控制按钮 */
+    .controls {
+      margin-top: 30px;
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #B2E2F2 0%, #8FD3E8 100%);
+      color: #333;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(178, 226, 242, 0.5);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    /* 步骤说明 */
+    .step-explanation {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff9e6;
+      border-radius: 15px;
+      border-left: 4px solid #FFC107;
+    }
+
+    .step-explanation p {
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .step-explanation strong {
+      color: #FF6B6B;
+    }
+
+    /* 借数动画停留 */
+    .borrow-pause {
+      animation: borrow-glow 1.5s ease-in-out;
+    }
+
+    @keyframes borrow-glow {
+      0%, 100% {
+        box-shadow: 0 3px 10px rgba(178, 226, 242, 0.5);
+      }
+      50% {
+        box-shadow: 0 6px 25px rgba(178, 226, 242, 0.8), 0 0 30px rgba(178, 226, 242, 0.4);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>凑十法演示：9 + 4 = ?</h1>
+
+  <div class="cuoshi-container">
+    <!-- 口诀条 -->
+    <div class="koujue-bar">
+      <span class="koujue-step" id="step1">看大数</span>
+      <span class="koujue-step" id="step2">分小数</span>
+      <span class="koujue-step" id="step3">凑成十</span>
+      <span class="koujue-step" id="step4">加剩数</span>
+    </div>
+
+    <!-- 题目区域 -->
+    <div class="problem-section">
+      <div class="number big" id="number9">9</div>
+      <span class="operator">+</span>
+      <div class="number small" id="number4">4</div>
+      <span class="equals">=</span>
+      <span style="color: #ccc; font-size: 2rem;">?</span>
+    </div>
+
+    <!-- 分解区域 -->
+    <div class="decomposition-section">
+      <div class="number-block" id="numberBlock">4</div>
+      <div class="split-container" id="splitContainer">
+        <div class="split-part part-1" id="part1">1</div>
+        <div class="split-part part-3" id="part3">3</div>
+      </div>
+    </div>
+
+    <!-- 凑十区域 -->
+    <div class="maketen-section" id="maketenSection">
+      <div class="result-10">10</div>
+      <span class="maketen-plus">+</span>
+      <div class="remainder" id="remainder">3</div>
+    </div>
+
+    <!-- 答案区域 -->
+    <div class="answer-section" id="answerSection">
+      <span class="equals">=</span>
+      <div class="final-answer">13</div>
+    </div>
+
+    <!-- 步骤说明 -->
+    <div class="step-explanation" id="explanation">
+      <p>点击"开始演示"按钮开始学习凑十法</p>
+    </div>
+
+    <!-- 控制按钮 -->
+    <div class="controls">
+      <button class="btn btn-primary" onclick="startAnimation()">开始演示</button>
+      <button class="btn btn-secondary" onclick="resetAnimation()">重置</button>
+    </div>
+  </div>
+
+  <script>
+    let isAnimating = false;
+
+    async function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function setStep(stepNum, completed = false) {
+      for (let i = 1; i <= 4; i++) {
+        const step = document.getElementById(`step${i}`);
+        step.classList.remove('active', 'completed');
+        if (i < stepNum) {
+          step.classList.add('completed');
+        } else if (i === stepNum) {
+          step.classList.add('active');
+        }
+      }
+    }
+
+    function setExplanation(html) {
+      document.getElementById('explanation').innerHTML = `<p>${html}</p>`;
+    }
+
+    async function startAnimation() {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      // 步骤 1: 看大数
+      setStep(1);
+      setExplanation('<strong>【看大数】</strong>9 是大数，它还需要 <span style="color: #B2E2F2; font-weight: bold;">1</span> 就能凑成 10！');
+      document.getElementById('number9').classList.add('highlight');
+      await sleep(2000);
+
+      // 步骤 2: 分小数 - 数字裂开
+      setStep(2);
+      document.getElementById('numberBlock').classList.add('splitting');
+      setExplanation('<strong>【分小数】</strong>把 4 分解成 <span style="color: #B2E2F2; font-weight: bold;">1</span> 和 <span style="color: #2d5a2d; font-weight: bold;">3</span>');
+      await sleep(500);
+
+      // 显示分解结果
+      document.getElementById('numberBlock').style.opacity = '0';
+      document.getElementById('splitContainer').classList.add('visible');
+
+      // 借数动画停留 1.5 秒 - Pedagogy 要求
+      document.getElementById('part1').classList.add('borrow-pause');
+      await sleep(1500);
+
+      // 1 飞向 9
+      setExplanation('<strong>【凑成十】</strong>9 + 1 = <span style="color: #4CAF50; font-weight: bold;">10</span>');
+      document.getElementById('part1').classList.add('moving');
+      await sleep(1000);
+
+      // 显示凑十结果
+      setStep(3);
+      document.getElementById('maketenSection').classList.add('visible');
+      await sleep(500);
+
+      // 3 飞过来
+      setExplanation('<strong>【加剩数】</strong><span style="color: #4CAF50; font-weight: bold;">10</span> + 3 = <span style="color: #FF6B6B; font-weight: bold;">13</span>');
+      document.getElementById('part3').classList.add('flying');
+      document.getElementById('remainder').classList.add('visible');
+      await sleep(1000);
+
+      // 显示最终答案
+      setStep(4);
+      document.getElementById('answerSection').classList.add('visible');
+      setExplanation('<strong>完成！</strong>9 + 4 = <span style="color: #FF6B6B; font-weight: bold; font-size: 1.2rem;">13</span>');
+
+      // 完成所有步骤
+      document.getElementById('step4').classList.add('completed');
+      document.getElementById('number9').classList.remove('highlight');
+
+      isAnimating = false;
+    }
+
+    function resetAnimation() {
+      // 重置所有状态
+      document.getElementById('number9').classList.remove('highlight');
+      document.getElementById('numberBlock').style.opacity = '1';
+      document.getElementById('numberBlock').classList.remove('splitting');
+      document.getElementById('splitContainer').classList.remove('visible');
+      document.getElementById('part1').classList.remove('moving', 'borrow-pause');
+      document.getElementById('part3').classList.remove('flying');
+      document.getElementById('maketenSection').classList.remove('visible');
+      document.getElementById('remainder').classList.remove('visible');
+      document.getElementById('answerSection').classList.remove('visible');
+
+      // 重置步骤条
+      setStep(0);
+
+      setExplanation('点击"开始演示"按钮开始学习凑十法');
+      isAnimating = false;
+    }
+
+    // 初始化
+    resetAnimation();
+  </script>
+</body>
+</html>

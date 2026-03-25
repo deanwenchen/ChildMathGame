@@ -2,6 +2,9 @@ import express from 'express';
 import userRoutes from './user.routes';
 import scoreRoutes from './score.routes';
 import questionRoutes from './question.routes';
+import leaderboardRoutes from './leaderboard.routes';
+import friendshipRoutes from './friendship.routes';
+import pkRoutes from './pk.routes';
 
 const router = express.Router();
 
@@ -19,6 +22,9 @@ router.get('/', (req, res) => {
       users: 'GET/POST /api/users',
       scores: 'GET/POST /api/scores',
       questions: 'GET /api/questions',
+      leaderboard: 'GET /api/leaderboard',
+      friends: 'GET/POST/DELETE /api/friends',
+      pk: 'GET/POST /api/pk',
       health: 'GET /api/health'
     }
   });
@@ -28,5 +34,8 @@ router.get('/', (req, res) => {
 router.use('/users', userRoutes);
 router.use('/scores', scoreRoutes);
 router.use('/questions', questionRoutes);
+router.use('/leaderboard', leaderboardRoutes);
+router.use('/friends', friendshipRoutes);
+router.use('/pk', pkRoutes);
 
 export default router;

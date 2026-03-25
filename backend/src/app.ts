@@ -1,11 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import http from 'http';
 import apiRoutes from './routes';
 import db from './database/database';
 import rateLimit from 'express-rate-limit';
+import LeaderboardService from './services/Leaderboard.service';
+import PKWebSocketService from './services/PKWebSocket.service';
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 
 // 中间件
@@ -48,9 +52,17 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 async function initialize() {
   try {
     await db.initialize();
-    app.listen(PORT, () => {
+
+    // 启动排行榜定时任务
+    LeaderboardService.startScheduledTasks();
+
+    // 初始化PK WebSocket服务
+    PKWebSocketService.initialize(server);
+
+    server.listen(PORT, () => {
       console.log(`🚀 服务器运行在 http://localhost:${PORT}`);
       console.log(`📚 API文档: http://localhost:${PORT}/api`);
+      console.log(`🎮 PK对战: ws://localhost:${PORT}/ws/pk`);
     });
   } catch (error) {
     console.error('❌ 服务器启动失败:', error);
